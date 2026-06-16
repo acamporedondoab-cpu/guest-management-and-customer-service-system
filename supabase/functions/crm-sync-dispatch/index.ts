@@ -214,7 +214,7 @@ async function runDispatch(env: Env, db: SupabaseClient, request: DispatchReques
   // carries a contact_id / error_class but never the secret or a provider body.
   try {
     const client = new GhlClient(env.ghlApiBase, env.ghlApiVersion, secret)
-    const result = await syncContact(client, context, event.payload ?? null)
+    const result = await syncContact(client, context, event.payload ?? null, event.event_type ?? null)
     log({
       event: 'synced',
       event_id: eventId,

@@ -41,8 +41,9 @@ export async function syncContact(
   client: GhlClient,
   ctx: DispatchContext,
   payload: unknown,
+  eventType: string | null,
 ): Promise<GhlSyncResult> {
-  const mapped = mapContact(payload, ctx)
+  const mapped = mapContact(payload, ctx, eventType)
   if (mapped.email === null || mapped.base === null) {
     return failed('validation', null, 'Event payload has no guest email to sync.')
   }

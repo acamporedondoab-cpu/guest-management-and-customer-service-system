@@ -31,7 +31,11 @@ export interface MappedContact {
   base: ContactBody | null // null when email is missing
 }
 
-export function mapContact(payload: unknown, ctx: DispatchContext): MappedContact {
+export function mapContact(
+  payload: unknown,
+  ctx: DispatchContext,
+  eventType: string | null,
+): MappedContact {
   const root = asObject(payload) ?? {}
   const guest = asObject(root.guest)
   const profile = asObject(root.guest_profile)
@@ -56,6 +60,10 @@ export function mapContact(payload: unknown, ctx: DispatchContext): MappedContac
   const tags: string[] = []
   if (tier) tags.push(`${prefix}${tier.toLowerCase()}`)
   if (isReturning) tags.push(`${prefix}returning`)
+  // Event-trigger tag for the Guest Communication layer. Added only for
+  // reservation.created; honors tag_prefix like the others. Reusable — the GHL
+  // workflow removes it after consumption so future reservations re-fire.
+  if (eventType === 'reservation.created') tags.push(`${prefix}reservation_created`)
 
   const base: ContactBody = { email }
   if (firstName) base.firstName = firstName
